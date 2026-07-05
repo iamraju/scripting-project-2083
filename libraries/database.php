@@ -27,6 +27,10 @@ class Database {
         return '';
     }
 
+    public function delete(string $sql): mixed {
+        return '';
+    }
+
     public function close() {
         $this->db->close();
     }
