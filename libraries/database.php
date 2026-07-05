@@ -1,5 +1,6 @@
 <?php
 
+// this the file to handle database operations
 class Database {
     public mysqli $db;
 
@@ -16,6 +17,14 @@ class Database {
 
     public function escape_string(string $string) {
         return $this->db->real_escape_string($string);
+    }
+
+    public function insert(string $sql): mixed {
+        return '';
+    }
+
+    public function update(string $sql): mixed {
+        return '';
     }
 
     public function close() {

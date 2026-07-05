@@ -1,7 +1,4 @@
 <?php
-// echo '<pre>';
-// print_r($_SERVER);
-// die;
 // includes files only once, preventing multiple inclusions
 $projectRoot = __DIR__;
 
