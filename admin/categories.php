@@ -1,5 +1,19 @@
 <?php
 include_once "./includes/islogin.php";
+
+// include all files required
+include_once '../bootstrap.php';
+
+// include categories model/class file
+require_once '../libraries/category.php';
+
+$category = new Category();
+
+$result = $category->selectAll("select * from categories");
+$categories = [];
+while($category = $result->fetch_assoc()) {
+  $categories[] = $category;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -57,8 +71,12 @@ include_once "./includes/islogin.php";
                 <div class="card mb-4">
                   <div class="card-header">
                     <h3 class="card-title">List of categories</h3>
+                    
+                      <a href="./category_form.php" class="btn btn-primary">Add New Category</a>
+                    
                   </div>
-                  <!-- /.card-header -->
+                  
+                  <?php include_once "./includes/alert-messages.php"; ?>
                   <div class="card-body">
                     <table class="table table-bordered table-hover">
                       <thead>
@@ -66,19 +84,23 @@ include_once "./includes/islogin.php";
                           <th>ID</th>
                           <th>Category Name</th>
                           <th>Description</th>
+                          <th>Status</th>
                           <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
+                        <?php foreach($categories as $category) {?>
                         <tr>
-                          <td>1.</td>
-                          <td>Smartphones</td>
-                          <td>Devices with advanced smartphone capabilities</td>
+                          <td><?php echo $category['id']; ?></td>
+                          <td><?php echo $category['name']; ?></td>
+                          <td><?php echo $category['description']; ?></td>
+                          <td><?php echo $category['status'] == '1' ? 'Active' : 'Inactive'; ?></td>
                           <td class="d-flex gap">
-                            <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                            <a href="./category_form.php?id=<?php echo $category['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a onclick="return confirm('Are you sure?');" href="./category_delete.php?id=<?php echo $category['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
                           </td>
                         </tr>
+                        <?php } ?>
                       </tbody>
                     </table>
                   </div>

@@ -6,3 +6,4 @@ require_once $projectRoot . '/config.php';
 require_once $projectRoot . '/functions.php';
 require_once $projectRoot . '/libraries/database.php';
 require_once $projectRoot . '/libraries/request.php';
+

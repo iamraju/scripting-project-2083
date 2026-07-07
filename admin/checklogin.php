@@ -4,7 +4,7 @@ session_start();
 include_once '../bootstrap.php';
 
 $conn = new Database();
-$conn = $conn->db; // get the mysqli connection object
+// $conn = $conn->db; // get the mysqli connection object
 
 // check if the form is submitted 
     // this page must be accesed through the form with method POST
@@ -16,14 +16,13 @@ if(Request::isPost()) {
     // sql injection prevention
     // Admin123\'
     // select * from users where email='ram@gmail.com' and password=md5('ram123') or 1=1; --
-    $email = $conn->real_escape_string($email);
-    $password = $conn->real_escape_string($password);
+    $email = $conn->dbSanitizedValue($email);
+    $password = $conn->dbSanitizedValue($password);
 
     $sql = "SELECT * FROM users WHERE email = '$email'";
 
-    $result = $conn->query($sql);
-    if($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
+    $user = $conn->selectOne($sql);
+    if($user) {
         if(md5($password) !== $user['password']) {
             // if the password is incorrect, redirect to the login page with an error message
             $_SESSION['admin_login_error'] = 'Invalid password.';

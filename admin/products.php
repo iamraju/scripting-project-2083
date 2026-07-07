@@ -1,5 +1,19 @@
 <?php
 include_once "./includes/islogin.php";
+
+// include all files required
+include_once '../bootstrap.php';
+
+// include categories model/class file
+require_once '../libraries/product.php';
+
+$product = new Product();
+
+$result = $product->selectAll("select * from products");
+$products = [];
+while($product = $result->fetch_assoc()) {
+  $products[] = $product;
+}
 ?>
 <!doctype html>
 <html lang="en">
@@ -57,6 +71,8 @@ include_once "./includes/islogin.php";
                 <div class="card mb-4">
                   <div class="card-header">
                     <h3 class="card-title">List of products</h3>
+
+                    <a href="./product_form.php" class="btn btn-primary">Add Product</a>
                   </div>
                   <!-- /.card-header -->
                   <div class="card-body">
@@ -72,17 +88,19 @@ include_once "./includes/islogin.php";
                         </tr>
                       </thead>
                       <tbody>
+                        <?php foreach($products as $product) {?>
                         <tr>
-                          <td>1.</td>
-                          <td>Apple iPhone 14 Pro Max</td>
-                          <td>Smartphones</td>
-                          <td>$1099.99</td>
-                          <td>25</td>
+                          <td><?php echo $product['id']; ?></td>
+                          <td><?php echo $product['name']; ?></td>
+                          <td><?php echo $product['category_id']; ?></td>
+                          <td>$<?php echo $product['price']; ?></td>
+                          <td><?php echo $product['stock']; ?></td>
                           <td class="d-flex gap">
-                            <a href="#" class="btn btn-sm btn-primary">Edit</a>
-                            <a href="#" class="btn btn-sm btn-danger">Delete</a>
+                            <a href="./product_form.php?id=<?php echo $product['id']; ?>" class="btn btn-sm btn-primary">Edit</a>
+                            <a onclick="return confirm('Are you sure to delete this product?');" href="./product_delete.php?id=<?php echo $product['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
                           </td>
                         </tr>
+                        <?php } ?>
                       </tbody>
                     </table>
                   </div>

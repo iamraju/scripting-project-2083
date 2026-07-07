@@ -5,11 +5,11 @@ class Request {
         return $_SERVER['REQUEST_METHOD'] === 'POST';
     }
 
-    public static function getPost(string $key, $default = null) {
+    public static function getPost(string $key, $default = null): mixed {
         return isset($_POST[$key]) ? self::purifyValue($_POST[$key]) : $default;
     }
 
-    public static function getGet(string $key, $default = null) {
+    public static function getGet(string $key, $default = null): mixed {
         return isset($_GET[$key]) ? self::purifyValue($_GET[$key]) : $default;
     }
 
