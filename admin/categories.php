@@ -5,7 +5,7 @@ include_once '../bootstrap.php';
 require_once '../libraries/category.php';
 
 $category = new Category();
-$categories = $category->selectAll("select * from categories where status=?", [1]);
+$categories = $category->selectAll("select * from categories");
 
 ?>
 <!doctype html>
@@ -54,6 +54,7 @@ $categories = $category->selectAll("select * from categories where status=?", [1
                           <th>ID</th>
                           <th>Category Name</th>
                           <th>Description</th>
+                          <th>Image</th>
                           <th>Status</th>
                           <th>Actions</th>
                         </tr>
@@ -64,10 +65,15 @@ $categories = $category->selectAll("select * from categories where status=?", [1
                           <td><?php echo $category['id']; ?></td>
                           <td><?php echo $category['name']; ?></td>
                           <td><?php echo $category['description']; ?></td>
+                          <td>
+                            <?php if(isset($category['image_name']) && !empty($category['image_name'])){ ?>
+                              <img width="100" src="../category-images/<?php echo $category['image_name']; ?>" alt="<?php echo $category['name']; ?>" />
+                            <?php } ?>
+                          </td>
                           <td><?php echo $category['status'] == '1' ? 'Active' : 'Inactive'; ?></td>
                           <td class="d-flex gap">
                             <a href="./category_form.php?id=<?php echo $category['id']; ?>" class="btn btn-sm btn-primary me-2">Edit</a>
-                            <a onclick="return confirm('Are you sure?');" href="./category_delete.php?id=<?php echo $category['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
+                            <a onclick="return confirm('Are you sure to delete this category ?');" href="./category_delete.php?id=<?php echo $category['id']; ?>" class="btn btn-sm btn-danger">Delete</a>
                           </td>
                         </tr>
                         <?php } ?>

@@ -15,12 +15,26 @@ if($id) {
   $editCategory = $category->findById($id);
 }
 
+$uploadDir = '../category-images'; // directory to store uploaded images
 // handle form submission
 if(Request::isPost()) {
+  $imageName = '';
+  // check and handle image upload
+  if(is_uploaded_file($_FILES['image_name']['tmp_name'])) {
+      $imageName = time() . '-' . $_FILES['image_name']['name']; // get actual uploaded file's name
+      move_uploaded_file($_FILES['image_name']['tmp_name'], $uploadDir . '/' . $imageName);
+
+      $oldImageName = Request::getPost('old_image_name');
+      if($oldImageName && file_exists($uploadDir . '/' . $oldImageName)) {
+          unlink($uploadDir . '/' . $oldImageName);
+      }
+  }
+
     $data = [
         'name' => Request::getPost('name'),
         'description' => Request::getPost('description'),
-        'status' => Request::getPost('status')
+        'status' => Request::getPost('status'),
+        'image_name' => $imageName
     ];
 
     if($id) {
@@ -83,7 +97,7 @@ if(Request::isPost()) {
                     <div class="card-title">Add Category</div>
                   </div>
 
-                  <form action="category_form.php?id=<?php echo $id; ?>" method="POST">
+                  <form enctype="multipart/form-data" action="category_form.php?id=<?php echo $id; ?>" method="POST">
                     <div class="card-body">
                       <div class="mb-3">
                         <label for="exampleInputEmail1" class="form-label">Name</label>
@@ -101,6 +115,24 @@ if(Request::isPost()) {
                         </div>
                       </div>
 
+                      <div class="row">
+                        <div class="col-12">
+                          <?php if(isset($editCategory['image_name']) && !empty($editCategory['image_name'])){ ?>
+                          <input type="hidden" name="old_image_name" value="<?php echo $editCategory['image_name']; ?>" />
+                            <div class="img">
+                              <img width="100" src="../category-images/<?php echo $editCategory['image_name']; ?>" alt="<?php echo $editCategory['name']; ?>" />
+                              </div>
+                            <?php } ?>
+
+                          <div class="input-group mb-3">
+                            
+                            
+                            <input type="file" class="form-control" name="image_name" id="image_name" />
+                            <label class="input-group-text" for="image_name">Upload</label>
+                          </div>
+                        </div>
+                      </div>
+
                       <label class="form-label">Status</label>
                       <div class="form-check mb-2">
                         <input
@@ -109,7 +141,7 @@ if(Request::isPost()) {
                           name="status"
                           id="status-1"
                           value="1"
-                          <?php echo isset($editCategory['status']) && $editCategory['status'] === '1' ? 'checked' : ''; ?>
+                          <?php echo isset($editCategory['status']) && $editCategory['status'] == '1' ? 'checked' : ''; ?>
                         />
                       <label class="form-check-label" for="status-1">Active</label>
                     </div>
@@ -119,7 +151,7 @@ if(Request::isPost()) {
                         type="radio" 
                         name="status" 
                         id="status-0"
-                        <?php echo isset($editCategory['status']) && $editCategory['status'] === '0' ? 'checked' : ''; ?>
+                        <?php echo isset($editCategory['status']) && $editCategory['status'] == '0' ? 'checked' : ''; ?>
                          />
                       <label class="form-check-label" for="status-0">Inactive</label>
                     </div>
@@ -137,29 +169,12 @@ if(Request::isPost()) {
                   </form>
                 </div>
               </div>
-              <!-- /.col -->
-              
-              <!-- /.col -->
             </div>
-            <!--end::Row-->
-            <!--begin::Row-->
-            
-            <!-- /.row (main row) -->
           </div>
-          <!--end::Container-->
         </div>
-        <!--end::App Content-->
       </main>
-      <!--end::App Main-->
-
-      <!--begin::Footer-->
       <?php include './includes/footer.php'; ?>
-      <!--end::Footer-->
-      
     </div>
-    
     <?php include './includes/footer-scripts.php'; ?>
-
   </body>
-  <!--end::Body-->
 </html>

@@ -1,6 +1,6 @@
 <?php
 // define a constant for site name
-define('SITE_NAME', 'Swastik E-commerce');
+define('SITE_NAME', 'Kalinchowk Mobile Center');
 
 // database connection settings
 define('DB_HOST', 'localhost');

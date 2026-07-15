@@ -1,6 +1,10 @@
 <?php
 // Load bootstrap and setup file
 include_once './bootstrap.php';
+
+include_once './libraries/category.php';
+$category = new Category();
+$categories = $category->selectAll("select * from categories where status = 1 order by name asc");
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -114,41 +118,23 @@ include_once './bootstrap.php';
                      <div class="catct">99 items</div>
                   </div>
                </div>
+
+               <?php foreach($categories as $category) {?>
                <div class="col-6 col-sm-4 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="70">
                   <div class="catcard" data-filter="burgers">
+                     <?php if(isset($category['image_name']) && !empty($category['image_name'])){ ?>
+                     <img class="catimg" src="./category-images/<?php echo $category['image_name']; ?>" alt="<?php echo $category['name']; ?>"/>
+                     <?php } else { ?>
                      <img class="catimg" src="img/category/2.jpg" alt=""/>
-                     <div class="catnm">Burgers</div>
-                     <div class="catct">24 items</div>
+                     <?php } ?>
+
+                     <div class="catnm"><?php echo $category['name']; ?></div>
+                     <div class="catct"><?php echo $category['item_count'] ?? 0; ?> items</div>
                   </div>
                </div>
-               <div class="col-6 col-sm-4 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="140">
-                  <div class="catcard" data-filter="pizza">
-                     <img class="catimg" src="img/category/3.jpg" alt=""/>
-                     <div class="catnm">Pizza</div>
-                     <div class="catct">18 items</div>
-                  </div>
-               </div>
-               <div class="col-6 col-sm-4 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="210">
-                  <div class="catcard" data-filter="chicken">
-                     <img class="catimg" src="img/category/4.jpg" alt=""/>
-                     <div class="catnm">Fried Chicken</div>
-                     <div class="catct">15 items</div>
-                  </div>
-               </div>
-               <div class="col-6 col-sm-4 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="280">
-                  <div class="catcard" data-filter="wraps">
-                     <img class="catimg" src="img/category/5.jpg" alt=""/>
-                     <div class="catnm">Wraps</div>
-                     <div class="catct">12 items</div>
-                  </div>
-               </div>
-               <div class="col-6 col-sm-4 col-md-3 col-lg-2" data-aos="zoom-in" data-aos-delay="350">
-                  <div class="catcard" data-filter="desserts">
-                     <img class="catimg" src="img/category/6.jpg" alt=""/>
-                     <div class="catnm">Desserts</div>
-                     <div class="catct">20 items</div>
-                  </div>
-               </div>
+               <?php } ?>
+
+               
             </div>
          </div>
       </section>

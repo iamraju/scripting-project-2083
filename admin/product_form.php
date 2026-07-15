@@ -1,22 +1,15 @@
 <?php
 include_once "./includes/islogin.php";
-
-// include all files required
 include_once '../bootstrap.php';
-
-// include categories model/class file
 require_once '../libraries/product.php';
+require_once '../libraries/category.php';
 
 $product = new Product();
-// if the form is to edit product
-
 $id = (int) Request::getGet('id');
 if($id) {
   $editProduct = $product->findById($id);
 }
 
-// fetch categories
-require_once '../libraries/category.php';
 $category = new Category();
 $categories = $category->selectAll("select * from categories");
 $uploadDir = '../product-images';
@@ -24,12 +17,17 @@ $uploadDir = '../product-images';
 // handle form submission
 if(Request::isPost()) {
 
-    $imageName = '';
+    $imageName = Request::getPost('old_image_name') ?? ''; // default to old image name if no new image is uploaded
 
     // check and handle image upload
     if(is_uploaded_file($_FILES['image_name']['tmp_name'])) {
         $imageName = time() . '-' . $_FILES['image_name']['name']; // get actual uploaded file's name
         move_uploaded_file($_FILES['image_name']['tmp_name'], $uploadDir . '/' . $imageName);
+
+        $oldImageName = Request::getPost('old_image_name');
+        if($oldImageName && file_exists($uploadDir . '/' . $oldImageName)) {
+            unlink($uploadDir . '/' . $oldImageName);
+        }
     }
 
     $data = [
@@ -69,11 +67,8 @@ if(Request::isPost()) {
 ?>
 <!doctype html>
 <html lang="en">
-  <!--begin::Head-->
   <head>
-    
     <?php include './includes/head.php'; ?>
-
     <title>Administrative Panel - Swastik E-Commerce</title>
   </head>
   <body class="layout-fixed sidebar-expand-lg bg-body-tertiary">
@@ -83,9 +78,7 @@ if(Request::isPost()) {
       <?php include './includes/sidebar.php'; ?>
       <main class="app-main">
         <div class="app-content-header">
-          <!--begin::Container-->
           <div class="container-fluid">
-            <!--begin::Row-->
             <div class="row">
               <div class="col-sm-6">
                 <h3 class="mb-0">Add Product</h3>
@@ -97,7 +90,6 @@ if(Request::isPost()) {
                 </ol>
               </div>
             </div>
-            <!--end::Row-->
           </div>
         </div>
         <div class="app-content">
@@ -279,7 +271,16 @@ if(Request::isPost()) {
 
                       <div class="row">
                         <div class="col-12">
+                          <?php if(isset($editProduct['image_name']) && !empty($editProduct['image_name'])){ ?>
+                          <input type="hidden" name="old_image_name" value="<?php echo $editProduct['image_name']; ?>" />
+                            <div class="img">
+                              <img width="100" src="../product-images/<?php echo $editProduct['image_name']; ?>" alt="<?php echo $editProduct['name']; ?>" />
+                              </div>
+                            <?php } ?>
+
                           <div class="input-group mb-3">
+                            
+                            
                             <input type="file" class="form-control" name="image_name" id="image_name" />
                             <label class="input-group-text" for="image_name">Upload</label>
                           </div>
@@ -301,29 +302,12 @@ if(Request::isPost()) {
                   </form>
                 </div>
               </div>
-              <!-- /.col -->
-              
-              <!-- /.col -->
             </div>
-            <!--end::Row-->
-            <!--begin::Row-->
-            
-            <!-- /.row (main row) -->
           </div>
-          <!--end::Container-->
         </div>
-        <!--end::App Content-->
       </main>
-      <!--end::App Main-->
-
-      <!--begin::Footer-->
       <?php include './includes/footer.php'; ?>
-      <!--end::Footer-->
-      
     </div>
-    
     <?php include './includes/footer-scripts.php'; ?>
-
   </body>
-  <!--end::Body-->
 </html>
